@@ -18,7 +18,7 @@ const float B_CONSTANT = 3435;
 const float SERIES_RESISTOR = 10000;
 
 // --- 비접촉 수위 센서 설정 ---
-const int LEVEL_SENSOR_PIN = 2; // D2 핀 사용
+const int LEVEL_SENSOR_PIN = 11; // D2 핀 사용
 
 // --- 안전 로직을 위한 변수 ---
 unsigned long relayOffTimestamp; // 릴레이가 꺼진 시간을 기록 (밀리초)
@@ -27,13 +27,17 @@ bool isRelayOn; // 릴레이의 현재 상태 (true: ON, false: OFF)
 
 void setup() {
   Serial.begin(9600);
+
+  // 릴레이가 초기화 중 잠깐 켜지는 것을 방지
+  // 1. 먼저 핀 상태를 HIGH(OFF)로 설정 (내부 풀업 저항 활성화 효과)
+  digitalWrite(RELAY_PIN, HIGH); 
+  // 2. 그 다음 핀 모드를 출력으로 설정
   pinMode(RELAY_PIN, OUTPUT);
 
   // 수위 센서 핀을 내부 풀업 저항 입력으로 설정
   pinMode(LEVEL_SENSOR_PIN, INPUT_PULLUP);
   
-  // 초기 상태를 'OFF'로 설정하고, 타이머를 시작합니다.
-  digitalWrite(RELAY_PIN, HIGH); // HIGH = Relay Closed (OFF)
+  // 초기 변수 설정
   isRelayOn = false;
   relayOffTimestamp = millis(); // OFF 상태로 시작하므로 현재 시간을 기록
   
